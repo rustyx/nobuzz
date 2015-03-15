@@ -1,7 +1,7 @@
 ## NoBuzz
 NoBuzz is a free computer buzzing/mosquito noise removal utility.
 
-The noise is often caused by applications like Chrome and Flash which increase system timer resolution to 1ms,
+The high pitch, tinny mosquito-like noise is often caused by applications like Chrome and Flash which increase system timer resolution to 1ms,
 which causes some aging PC systems (especially laptops) to buzz at 1KHz.
 
 ### How does it work?
