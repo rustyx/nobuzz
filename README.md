@@ -10,4 +10,4 @@ Note: NoBuzz is **not a cure** for the buzzing issue, it is merely a workaround.
 * Animations might be less smooth (not a big deal on older laptops)
 * Some applications might not function properly (please open a ticket if you find one)
 
-Note also that there are other ways to increase timer resolution, and some applications that really need a high timer resolution (e.g. virtualization software) will still be able to do that.
+Note also that there are other ways to increase system timer resolution, e.g. via a device driver, and some applications (e.g. virtualization software) will still be able to do that.
