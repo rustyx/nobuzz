@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
+	<Product Id="*" Name="nobuzz (64-bit)" Language="1033" Version="0.5" Manufacturer="rustyx.org" UpgradeCode="0a6f5c71-0c6d-41d6-b2e2-dd9429660064">
+		<Package InstallerVersion="200" Compressed="yes" InstallPrivileges="elevated" AdminImage="yes" InstallScope="perMachine" Platform="x64" />
+
+		<MajorUpgrade AllowSameVersionUpgrades="yes" DowngradeErrorMessage="A newer version of [ProductName] is already installed." />
+    <MediaTemplate EmbedCab="yes" />
+    <Property Id="ARPPRODUCTICON" Value="..\nobuzz.ico" />
+
+    <Feature Id="ProductFeature" Title="nobuzz64" Level="1">
+			<ComponentGroupRef Id="ProductComponents" />
+		</Feature>
+    
+    <InstallExecuteSequence>
+      <Custom Action='addAppInitEntryConfig' Before='addAppInitEntry'/>
+      <Custom Action='addAppInitEntry' After='InstallFiles'>
+        NOT REMOVE
+      </Custom>
+      <Custom Action='removeAppInitEntryConfig' Before='removeAppInitEntry'/>
+      <Custom Action='removeAppInitEntry' Before='RemoveFiles'>
+        REMOVE
+      </Custom>
+    </InstallExecuteSequence>
+  </Product>
+
+	<Fragment>
+		<Directory Id="TARGETDIR" Name="SourceDir">
+			<Directory Id="ProgramFiles64Folder">
+				<Directory Id="INSTALLFOLDER" Name="nobuzz" />
+			</Directory>
+		</Directory>
+	</Fragment>
+
+	<Fragment>
+		<ComponentGroup Id="ProductComponents" Directory="INSTALLFOLDER">
+      <Component Id="ProductComponent" Win64="yes">
+        <File Id="NOBUZZ64" Source="..\NoBuzzDLL\x64\release\nobuzz64.dll" KeyPath="yes" />
+        <!--
+        <RegistryKey Root="HKLM" Key="SOFTWARE\Microsoft\Windows NT\CurrentVersion\Windows">
+          <RegistryValue Name="LoadAppInit_DLLs" Type="integer" Value="1" />
+          <RegistryValue Name="RequireSignedAppInit_DLLs" Type="integer" Value="0" />
+          <RegistryValue Name="AppInit_DLLs" Type="string" Value="[!NOBUZZ64]" />
+        </RegistryKey>
+        -->
+      </Component>
+    </ComponentGroup>
+    <Binary Id='SetupHelper' SourceFile='..\SetupHelper\bin\x64\Release\SetupHelper.dll'/>
+    <CustomAction Id='addAppInitEntry' BinaryKey='SetupHelper' DllEntry='addAppInitEntry'  Execute='deferred' Impersonate='no' Return='check'/>
+    <CustomAction Id='addAppInitEntryConfig' Property='addAppInitEntry' Value='[INSTALLFOLDER]nobuzz64.dll'/>
+    <CustomAction Id='removeAppInitEntry' BinaryKey='SetupHelper' DllEntry='removeAppInitEntry'  Execute='deferred' Impersonate='no' Return='check'/>
+    <CustomAction Id='removeAppInitEntryConfig' Property='removeAppInitEntry' Value='[INSTALLFOLDER]nobuzz64.dll'/>
+  </Fragment>
+</Wix>
