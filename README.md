@@ -6,7 +6,7 @@ which causes some aging PC systems (especially laptops) to buzz at 1KHz.
 
 ### How does it work?
 
-NoBuzz attempts to prevent calls to `timeBeginPeriod(uPeriod)` with uPeriod value <16. This is often sufficient to stop the buzzing noise.
+NoBuzz attempts to prevent calls to `timeBeginPeriod(uPeriod)` with uPeriod value <16. This is often sufficient to stop the mosquito noise.
 
 Note: NoBuzz is _not a cure_ for the buzzing issue, it is merely a workaround. Side effects include:
 * Animations might be less smooth
