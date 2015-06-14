@@ -39,11 +39,15 @@ int logRecCount;
 
 typedef HMODULE(WINAPI *P_LOAD_LIBRARY_A)(LPCSTR lpLibFileName);
 typedef HMODULE(WINAPI *P_LOAD_LIBRARY_W)(LPWSTR lpLibFileName);
+typedef HMODULE(WINAPI *P_LOAD_LIBRARY_EX_A)(LPCSTR lpLibFileName, HANDLE hFile, DWORD dwFlags);
+typedef HMODULE(WINAPI *P_LOAD_LIBRARY_EX_W)(LPWSTR lpLibFileName, HANDLE hFile, DWORD dwFlags);
 typedef MMRESULT(WINAPI *P_TIME_BEGIN_PERIOD)(UINT uPeriod);
 HMODULE hKernel = ::GetModuleHandle(L"kernel32");
 HMODULE hWinMM;
 P_LOAD_LIBRARY_A origLoadLibraryA;
 P_LOAD_LIBRARY_W origLoadLibraryW;
+P_LOAD_LIBRARY_EX_A origLoadLibraryExA;
+P_LOAD_LIBRARY_EX_W origLoadLibraryExW;
 P_TIME_BEGIN_PERIOD origTimeBeginPeriod;
 P_TIME_BEGIN_PERIOD origTimeEndPeriod;
 
@@ -144,31 +148,70 @@ HMODULE WINAPI hookedLoadLibraryW(LPWSTR lpLibFileName)
     return m;
 }
 
+HMODULE WINAPI hookedLoadLibraryExA(LPCSTR lpLibFileName, HANDLE hFile, DWORD dwFlags)
+{
+	HMODULE m = origLoadLibraryExA(lpLibFileName, hFile, dwFlags);
+	if (!origTimeBeginPeriod) {
+		if (hookWinMM(lpLibFileName, NULL))
+			unhookLoadLibrary();
+	}
+	return m;
+}
+
+HMODULE WINAPI hookedLoadLibraryExW(LPWSTR lpLibFileName, HANDLE hFile, DWORD dwFlags)
+{
+	HMODULE m = origLoadLibraryExW(lpLibFileName, hFile, dwFlags);
+	if (!origTimeBeginPeriod) {
+		if (hookWinMM(NULL, lpLibFileName))
+			unhookLoadLibrary();
+	}
+	return m;
+}
+
 int hookLoadLibrary()
 {
     openLogFile();
     if (origLoadLibraryA)
         return 0;
-    origLoadLibraryA = (P_LOAD_LIBRARY_A)::GetProcAddress(hKernel, "LoadLibraryA");
-    origLoadLibraryW = (P_LOAD_LIBRARY_W)::GetProcAddress(hKernel, "LoadLibraryW");
-    if (!origLoadLibraryA || !origLoadLibraryW)
+	origLoadLibraryA = (P_LOAD_LIBRARY_A)::GetProcAddress(hKernel, "LoadLibraryA");
+	origLoadLibraryW = (P_LOAD_LIBRARY_W)::GetProcAddress(hKernel, "LoadLibraryW");
+	origLoadLibraryExA = (P_LOAD_LIBRARY_EX_A)::GetProcAddress(hKernel, "LoadLibraryExA");
+	//origLoadLibraryExW = (P_LOAD_LIBRARY_EX_W)::GetProcAddress(hKernel, "LoadLibraryEXW");
+	if (!origLoadLibraryA || !origLoadLibraryW)
         return 0;
     else {
-        Mhook_SetHook((PVOID*)&origLoadLibraryA, hookedLoadLibraryA);
-        Mhook_SetHook((PVOID*)&origLoadLibraryW, hookedLoadLibraryW);
-        return 1;
+		Mhook_SetHook((PVOID*)&origLoadLibraryA, hookedLoadLibraryA);
+		Mhook_SetHook((PVOID*)&origLoadLibraryW, hookedLoadLibraryW);
+		Mhook_SetHook((PVOID*)&origLoadLibraryExA, hookedLoadLibraryExA);
+		//Mhook_SetHook((PVOID*)&origLoadLibraryExW, hookedLoadLibraryExW);
+		return 1;
     }
 }
 
 int unhookLoadLibrary()
 {
-    if (!origLoadLibraryA || !origLoadLibraryW)
-        return 0;
-    Mhook_Unhook((PVOID*)&origLoadLibraryA);
-    Mhook_Unhook((PVOID*)&origLoadLibraryW);
-    origLoadLibraryA = NULL;
-    origLoadLibraryW = NULL;
-    return 1;
+	int rc = 0;
+	if (origLoadLibraryA) {
+		Mhook_Unhook((PVOID*)&origLoadLibraryA);
+		origLoadLibraryA = NULL;
+		rc = 1;
+	}
+	if (origLoadLibraryW) {
+		Mhook_Unhook((PVOID*)&origLoadLibraryW);
+		origLoadLibraryW = NULL;
+		rc = 1;
+	}
+	if (origLoadLibraryExA) {
+		Mhook_Unhook((PVOID*)&origLoadLibraryExA);
+		origLoadLibraryExA = NULL;
+		rc = 1;
+	}
+	if (origLoadLibraryExW) {
+		Mhook_Unhook((PVOID*)&origLoadLibraryExW);
+		origLoadLibraryExW = NULL;
+		rc = 1;
+	}
+	return rc;
 }
 
 BOOL WINAPI DllMain(

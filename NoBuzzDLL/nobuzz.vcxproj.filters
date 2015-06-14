@@ -71,5 +71,13 @@
     <ClInclude Include="mhook\disasm-lib\misc.h">
       <Filter>Source Files\mhook\disasm-lib</Filter>
     </ClInclude>
+    <ClInclude Include="resource.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="nobuzz.rc">
+      <Filter>Resource Files</Filter>
+    </ResourceCompile>
   </ItemGroup>
 </Project>

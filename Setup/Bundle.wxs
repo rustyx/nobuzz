@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Wix xmlns="http://schemas.microsoft.com/wix/2006/wi" xmlns:bal="http://schemas.microsoft.com/wix/BalExtension" xmlns:util="http://schemas.microsoft.com/wix/UtilExtension">
-  <Bundle Name="NoBuzz (beta) v0.5" Version="0.5" Manufacturer="rustyx.org" Compressed="yes" DisableModify="yes" DisableRepair="yes" IconSourceFile="..\nobuzz.ico" UpgradeCode="0a6f5c71-0c6d-41d6-b2e2-dd9429663264">
+  <Bundle Name="NoBuzz (beta) v0.6" Version="0.6" Manufacturer="rustyx.org" Compressed="yes" DisableModify="yes" IconSourceFile="..\nobuzz.ico" UpgradeCode="0a6f5c71-0c6d-41d6-b2e2-dd9429663264">
     <BootstrapperApplicationRef Id="WixStandardBootstrapperApplication.RtfLicense">
       <bal:WixStandardBootstrapperApplication SuppressOptionsUI="yes" SuppressRepair="yes" LogoFile="logo.png" LicenseFile="..\license.rtf" />
     </BootstrapperApplicationRef>

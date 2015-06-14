@@ -170,8 +170,12 @@
     <ClInclude Include="mhook\disasm-lib\disasm_x86_tables.h" />
     <ClInclude Include="mhook\disasm-lib\misc.h" />
     <ClInclude Include="mhook\mhook-lib\mhook.h" />
+    <ClInclude Include="resource.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="targetver.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="nobuzz.rc" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

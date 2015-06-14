@@ -1,9 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
-	<Product Id="*" Name="nobuzz" Language="1033" Version="0.5" Manufacturer="rustyx.org" UpgradeCode="0a6f5c71-0c6d-41d6-b2e2-dd9429660032">
-		<Package InstallerVersion="200" Compressed="yes" InstallPrivileges="elevated" AdminImage="yes" InstallScope="perMachine" />
+	<Product Id="*" Name="nobuzz" Language="1033" Version="0.6" Manufacturer="rustyx.org" UpgradeCode="0a6f5c71-0c6d-41d6-b2e2-dd9429660032">
+		<Package InstallerVersion="200" Compressed="yes" InstallPrivileges="elevated" InstallScope="perMachine" />
 
-		<MajorUpgrade AllowSameVersionUpgrades="yes" DowngradeErrorMessage="A newer version of [ProductName] is already installed." />
 		<MediaTemplate EmbedCab="yes" />
     <Property Id="ARPPRODUCTICON" Value="..\nobuzz.ico" />
 

@@ -1,11 +1,18 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Express 2013 for Windows Desktop
-VisualStudioVersion = 12.0.30723.0
+# Visual Studio 2013
+VisualStudioVersion = 12.0.31101.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "nobuzz", "NoBuzzDLL\nobuzz.vcxproj", "{76062233-50DA-499C-B3BD-CE0F95D1B083}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "SetupHelper", "SetupHelper\SetupHelper.vcxproj", "{FFC14B77-3459-4B17-B2EF-F9590250A92D}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Setup", "Setup", "{21B2C639-FC30-46A1-8050-A7F9F4364A95}"
+	ProjectSection(SolutionItems) = preProject
+		Setup\Bundle.wxs = Setup\Bundle.wxs
+		Setup\nobuzz32.wxs = Setup\nobuzz32.wxs
+		Setup\nobuzz64.wxs = Setup\nobuzz64.wxs
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
