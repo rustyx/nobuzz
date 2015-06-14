@@ -16,7 +16,7 @@ Note that this tool has no effect on GPU coil whine, it works only on CPU sleep 
 
 ### Installation
 
-Download the latest [setup file](https://github.com/rustyx/nobuzz/releases/download/v0.5/nobuzz_setup.exe), install, reboot (or log off/on), enjoy!
+Download the latest [setup file](https://github.com/rustyx/nobuzz/releases/download/0.6/nobuzz_setup.exe), install, reboot (or log off/on), enjoy!
 
 Note: if the mosquito noise still remains, `powercfg -energy` might be able to provide an answer on which app increased the timer resolution.
 
