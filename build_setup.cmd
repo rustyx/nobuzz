@@ -1,5 +1,5 @@
 @echo off
-set WIX_HOME="C:\Program Files (x86)\WiX Toolset v3.9\bin"
+set WIX_HOME="..\packages\WiX.3.10.1\tools"
 cd Setup
 mkdir bin\Release
 %WIX_HOME%\candle.exe -o bin\Release\ nobuzz32.wxs
