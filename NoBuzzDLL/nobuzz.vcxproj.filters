@@ -13,14 +13,17 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
-    <Filter Include="Source Files\mhook">
-      <UniqueIdentifier>{0f79824c-dfbe-49b0-ab5c-be4d84e0da7a}</UniqueIdentifier>
+    <Filter Include="Source Files\minhook">
+      <UniqueIdentifier>{e32980b6-0cf0-4d43-a34b-bba4677a9fe6}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source Files\mhook\mhook-lib">
-      <UniqueIdentifier>{99ee5c37-2dfa-47ed-9551-a89fc711d67e}</UniqueIdentifier>
+    <Filter Include="Source Files\minhook\include">
+      <UniqueIdentifier>{3b78b706-f702-4c36-bff1-bff2a7d26c7d}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source Files\mhook\disasm-lib">
-      <UniqueIdentifier>{21c9ec5e-db55-4f9a-92fc-0d13dafdb102}</UniqueIdentifier>
+    <Filter Include="Source Files\minhook\src">
+      <UniqueIdentifier>{34b2a2ca-6f52-4963-b837-fe89c3ea16d8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\minhook\src\HDE">
+      <UniqueIdentifier>{d00bb136-9c0c-478b-9c42-ace278252dc3}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -30,20 +33,20 @@
     <ClCompile Include="stdafx.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="mhook\mhook-lib\mhook.cpp">
-      <Filter>Source Files\mhook\mhook-lib</Filter>
+    <ClCompile Include="minhook\src\buffer.c">
+      <Filter>Source Files\minhook\src</Filter>
     </ClCompile>
-    <ClCompile Include="mhook\disasm-lib\cpu.c">
-      <Filter>Source Files\mhook\disasm-lib</Filter>
+    <ClCompile Include="minhook\src\hook.c">
+      <Filter>Source Files\minhook\src</Filter>
     </ClCompile>
-    <ClCompile Include="mhook\disasm-lib\disasm.c">
-      <Filter>Source Files\mhook\disasm-lib</Filter>
+    <ClCompile Include="minhook\src\trampoline.c">
+      <Filter>Source Files\minhook\src</Filter>
     </ClCompile>
-    <ClCompile Include="mhook\disasm-lib\disasm_x86.c">
-      <Filter>Source Files\mhook\disasm-lib</Filter>
+    <ClCompile Include="minhook\src\HDE\hde32.c">
+      <Filter>Source Files\minhook\src\HDE</Filter>
     </ClCompile>
-    <ClCompile Include="mhook\disasm-lib\misc.c">
-      <Filter>Source Files\mhook\disasm-lib</Filter>
+    <ClCompile Include="minhook\src\HDE\hde64.c">
+      <Filter>Source Files\minhook\src\HDE</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -53,26 +56,32 @@
     <ClInclude Include="targetver.h">
       <Filter>Source Files</Filter>
     </ClInclude>
-    <ClInclude Include="mhook\mhook-lib\mhook.h">
-      <Filter>Source Files\mhook\mhook-lib</Filter>
-    </ClInclude>
-    <ClInclude Include="mhook\disasm-lib\cpu.h">
-      <Filter>Source Files\mhook\disasm-lib</Filter>
-    </ClInclude>
-    <ClInclude Include="mhook\disasm-lib\disasm.h">
-      <Filter>Source Files\mhook\disasm-lib</Filter>
-    </ClInclude>
-    <ClInclude Include="mhook\disasm-lib\disasm_x86.h">
-      <Filter>Source Files\mhook\disasm-lib</Filter>
-    </ClInclude>
-    <ClInclude Include="mhook\disasm-lib\disasm_x86_tables.h">
-      <Filter>Source Files\mhook\disasm-lib</Filter>
-    </ClInclude>
-    <ClInclude Include="mhook\disasm-lib\misc.h">
-      <Filter>Source Files\mhook\disasm-lib</Filter>
-    </ClInclude>
     <ClInclude Include="resource.h">
       <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="minhook\include\MinHook.h">
+      <Filter>Source Files\minhook\include</Filter>
+    </ClInclude>
+    <ClInclude Include="minhook\src\buffer.h">
+      <Filter>Source Files\minhook\src</Filter>
+    </ClInclude>
+    <ClInclude Include="minhook\src\trampoline.h">
+      <Filter>Source Files\minhook\src</Filter>
+    </ClInclude>
+    <ClInclude Include="minhook\src\HDE\hde32.h">
+      <Filter>Source Files\minhook\src\HDE</Filter>
+    </ClInclude>
+    <ClInclude Include="minhook\src\HDE\hde64.h">
+      <Filter>Source Files\minhook\src\HDE</Filter>
+    </ClInclude>
+    <ClInclude Include="minhook\src\HDE\pstdint.h">
+      <Filter>Source Files\minhook\src\HDE</Filter>
+    </ClInclude>
+    <ClInclude Include="minhook\src\HDE\table32.h">
+      <Filter>Source Files\minhook\src\HDE</Filter>
+    </ClInclude>
+    <ClInclude Include="minhook\src\HDE\table64.h">
+      <Filter>Source Files\minhook\src\HDE</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

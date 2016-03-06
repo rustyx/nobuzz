@@ -156,20 +156,22 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp" />
-    <ClCompile Include="mhook\disasm-lib\cpu.c" />
-    <ClCompile Include="mhook\disasm-lib\disasm.c" />
-    <ClCompile Include="mhook\disasm-lib\disasm_x86.c" />
-    <ClCompile Include="mhook\disasm-lib\misc.c" />
-    <ClCompile Include="mhook\mhook-lib\mhook.cpp" />
+    <ClCompile Include="minhook\src\buffer.c" />
+    <ClCompile Include="minhook\src\HDE\hde32.c" />
+    <ClCompile Include="minhook\src\HDE\hde64.c" />
+    <ClCompile Include="minhook\src\hook.c" />
+    <ClCompile Include="minhook\src\trampoline.c" />
     <ClCompile Include="stdafx.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="mhook\disasm-lib\cpu.h" />
-    <ClInclude Include="mhook\disasm-lib\disasm.h" />
-    <ClInclude Include="mhook\disasm-lib\disasm_x86.h" />
-    <ClInclude Include="mhook\disasm-lib\disasm_x86_tables.h" />
-    <ClInclude Include="mhook\disasm-lib\misc.h" />
-    <ClInclude Include="mhook\mhook-lib\mhook.h" />
+    <ClInclude Include="minhook\include\MinHook.h" />
+    <ClInclude Include="minhook\src\buffer.h" />
+    <ClInclude Include="minhook\src\HDE\hde32.h" />
+    <ClInclude Include="minhook\src\HDE\hde64.h" />
+    <ClInclude Include="minhook\src\HDE\pstdint.h" />
+    <ClInclude Include="minhook\src\HDE\table32.h" />
+    <ClInclude Include="minhook\src\HDE\table64.h" />
+    <ClInclude Include="minhook\src\trampoline.h" />
     <ClInclude Include="resource.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="targetver.h" />
@@ -178,6 +180,5 @@
     <ResourceCompile Include="nobuzz.rc" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
-  <ImportGroup Label="ExtensionTargets">
-  </ImportGroup>
+  <ImportGroup Label="ExtensionTargets" />
 </Project>
