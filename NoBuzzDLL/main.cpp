@@ -25,7 +25,7 @@
 #include "stdafx.h"
 #include "minhook/include/MinHook.h"
 
-int unhookLoadLibrary();
+int unhookKernel32();
 
 HANDLE hfile = INVALID_HANDLE_VALUE;
 wchar_t modname[256];
@@ -50,6 +50,13 @@ P_TIME_BEGIN_PERIOD pTimeBeginPeriod;
 P_TIME_BEGIN_PERIOD origTimeBeginPeriod;
 P_TIME_BEGIN_PERIOD pTimeEndPeriod;
 P_TIME_BEGIN_PERIOD origTimeEndPeriod;
+P_TIME_BEGIN_PERIOD pMMTimeBeginPeriod;
+P_TIME_BEGIN_PERIOD origMMTimeBeginPeriod;
+P_TIME_BEGIN_PERIOD pMMTimeEndPeriod;
+P_TIME_BEGIN_PERIOD origMMTimeEndPeriod;
+//typedef size_t(NTAPI *P_NT_SET_TIMER_RESOLUTION)(size_t DesiredResolution, size_t SetResolution, PULONG CurrentResolution);
+//P_NT_SET_TIMER_RESOLUTION pNtSetTimerResolution;
+//P_NT_SET_TIMER_RESOLUTION origNtSetTimerResolution;
 
 void openLogFile()
 {
@@ -86,15 +93,6 @@ void log(const char*fmt, ...)
         SetFilePointer(hfile, 0, NULL, FILE_END);
         WriteFile(hfile, buf, len, &n, NULL);
     }
-}
-
-MMRESULT WINAPI hookedTimeEndPeriod(UINT uPeriod)
-{
-    if (uPeriod < 16) {
-        return TIMERR_NOERROR;
-        //return TIMERR_NOCANDO;
-    }
-    return origTimeEndPeriod(uPeriod);
 }
 
 template <typename T>
@@ -140,40 +138,69 @@ MMRESULT WINAPI hookedTimeBeginPeriod(UINT uPeriod)
     return origTimeBeginPeriod(uPeriod);
 }
 
-int hookWinMM(LPCSTR originA, LPWSTR originW)
+MMRESULT WINAPI hookedTimeEndPeriod(UINT uPeriod)
 {
-    if (pTimeBeginPeriod)
-        return 0;
+    if (uPeriod < 16) {
+        return TIMERR_NOERROR;
+        //return TIMERR_NOCANDO;
+    }
+    return origTimeEndPeriod(uPeriod);
+}
+
+MMRESULT WINAPI hookedMMTimeBeginPeriod(UINT uPeriod)
+{
+    if (hfile != INVALID_HANDLE_VALUE && logRecCount++ < 10) {
+        log("%ls : winmm!timeBeginPeriod(%d)", modname, uPeriod);
+    }
+    if (uPeriod < 16) {
+        return TIMERR_NOERROR;
+        //return TIMERR_NOCANDO;
+    }
+    return origMMTimeBeginPeriod(uPeriod);
+}
+
+MMRESULT WINAPI hookedMMTimeEndPeriod(UINT uPeriod)
+{
+    if (uPeriod < 16) {
+        return TIMERR_NOERROR;
+        //return TIMERR_NOCANDO;
+    }
+    return origMMTimeEndPeriod(uPeriod);
+}
+
+bool hookWinMM(LPCSTR originA, LPWSTR originW)
+{
+    if (pMMTimeBeginPeriod)
+        return false;
     hWinMM = ::GetModuleHandleW(L"winmm");
-    if (hWinMM && !pTimeBeginPeriod && ::GetProcAddress(hWinMM, "timeBeginPeriod")) {
+    if (hWinMM && !pMMTimeBeginPeriod && ::GetProcAddress(hWinMM, "timeBeginPeriod")) {
         if (originA)
             log("Attached: %ls (after %s)", modname, originA);
         else if (originW)
             log("Attached: %ls (after %ls)", modname, originW);
         else
             log("Attached: %ls", modname);
-        bool hooked = hookApi(L"winmm", "timeBeginPeriod", hookedTimeBeginPeriod, &pTimeBeginPeriod, &origTimeBeginPeriod);
-        hookApi(L"winmm", "timeEndPeriod", hookedTimeEndPeriod, &pTimeEndPeriod, &origTimeEndPeriod);
+        bool hooked = hookApi(L"winmm", "timeBeginPeriod", hookedMMTimeBeginPeriod, &pMMTimeBeginPeriod, &origMMTimeBeginPeriod);
+        hookApi(L"winmm", "timeEndPeriod", hookedMMTimeEndPeriod, &pMMTimeEndPeriod, &origMMTimeEndPeriod);
         return hooked;
     }
-    return 0;
+    return false;
 }
 
 int unhookWinMM()
 {
-    if (!pTimeBeginPeriod)
+    if (!pMMTimeBeginPeriod)
         return 0;
-    unhookApi("timeBeginPeriod", &pTimeBeginPeriod);
-    unhookApi("timeEndPeriod", &pTimeEndPeriod);
+    unhookApi("timeBeginPeriod", &pMMTimeBeginPeriod);
+    unhookApi("timeEndPeriod", &pMMTimeEndPeriod);
     return 1;
 }
 
 HMODULE WINAPI hookedLoadLibraryA(LPCSTR lpLibFileName)
 {
     HMODULE m = origLoadLibraryA(lpLibFileName);
-    if (!pTimeBeginPeriod) {
-        if (hookWinMM(lpLibFileName, NULL))
-            unhookLoadLibrary();
+    if (!pMMTimeBeginPeriod) {
+        hookWinMM(lpLibFileName, NULL);
     }
     return m;
 }
@@ -181,9 +208,8 @@ HMODULE WINAPI hookedLoadLibraryA(LPCSTR lpLibFileName)
 HMODULE WINAPI hookedLoadLibraryW(LPWSTR lpLibFileName)
 {
     HMODULE m = origLoadLibraryW(lpLibFileName);
-    if (!pTimeBeginPeriod) {
-        if (hookWinMM(NULL, lpLibFileName))
-            unhookLoadLibrary();
+    if (!pMMTimeBeginPeriod) {
+        hookWinMM(NULL, lpLibFileName);
     }
     return m;
 }
@@ -191,9 +217,8 @@ HMODULE WINAPI hookedLoadLibraryW(LPWSTR lpLibFileName)
 HMODULE WINAPI hookedLoadLibraryExA(LPCSTR lpLibFileName, HANDLE hFile, DWORD dwFlags)
 {
     HMODULE m = origLoadLibraryExA(lpLibFileName, hFile, dwFlags);
-    if (!pTimeBeginPeriod) {
-        if (hookWinMM(lpLibFileName, NULL))
-            unhookLoadLibrary();
+    if (!pMMTimeBeginPeriod) {
+        hookWinMM(lpLibFileName, NULL);
     }
     return m;
 }
@@ -201,30 +226,61 @@ HMODULE WINAPI hookedLoadLibraryExA(LPCSTR lpLibFileName, HANDLE hFile, DWORD dw
 HMODULE WINAPI hookedLoadLibraryExW(LPWSTR lpLibFileName, HANDLE hFile, DWORD dwFlags)
 {
     HMODULE m = origLoadLibraryExW(lpLibFileName, hFile, dwFlags);
-    if (!pTimeBeginPeriod) {
-        if (hookWinMM(NULL, lpLibFileName))
-            unhookLoadLibrary();
+    if (!pMMTimeBeginPeriod) {
+        hookWinMM(NULL, lpLibFileName);
     }
     return m;
 }
 
-int hookLoadLibrary()
+
+/*size_t NTAPI hookedNtSetTimerResolution(size_t DesiredResolution, size_t SetResolution, PULONG CurrentResolution)
 {
-    if (origLoadLibraryA || !::GetProcAddress(hKernel, "LoadLibraryA"))
+    if (hfile != INVALID_HANDLE_VALUE && logRecCount++ < 10) {
+        log("%ls : NtSetTimerResolution(%lu)", modname, (ULONG)DesiredResolution);
+    }
+    if (DesiredResolution < 156000) {
+        DesiredResolution = 156000;
+        SetResolution = 0;
+    }
+    return origNtSetTimerResolution(DesiredResolution, SetResolution, CurrentResolution);
+}*/
+
+int hookKernel32()
+{
+    if (pLoadLibraryA || pTimeBeginPeriod)
         return 0;
     openLogFile();
-    bool hooked = hookApi(L"kernel32", "LoadLibraryA", hookedLoadLibraryA, &pLoadLibraryA, &origLoadLibraryA);
-    hookApi(L"kernel32", "LoadLibraryW", hookedLoadLibraryW, &pLoadLibraryW, &origLoadLibraryW);
-    hookApi(L"kernel32", "LoadLibraryExA", hookedLoadLibraryExA, &pLoadLibraryExA, &origLoadLibraryExA);
+    bool hooked;
+    if (::GetProcAddress(hKernel, "timeBeginPeriod")) {
+        hooked = hookApi(L"kernel32", "timeBeginPeriod", hookedTimeBeginPeriod, &pTimeBeginPeriod, &origTimeBeginPeriod);
+        hookApi(L"kernel32", "timeEndPeriod", hookedTimeEndPeriod, &pTimeEndPeriod, &origTimeEndPeriod);
+        if (hooked)
+            log("Attached: %ls", modname);
+    }
+    else
+    {
+        hooked = hookWinMM(NULL, NULL);
+        if (!hooked)
+        {
+            hooked = hookApi(L"kernel32", "LoadLibraryA", hookedLoadLibraryA, &pLoadLibraryA, &origLoadLibraryA);
+            hookApi(L"kernel32", "LoadLibraryW", hookedLoadLibraryW, &pLoadLibraryW, &origLoadLibraryW);
+            hookApi(L"kernel32", "LoadLibraryExA", hookedLoadLibraryExA, &pLoadLibraryExA, &origLoadLibraryExA);
+        }
+    }
+    //hookApi(L"ntdll", "NtSetTimerResolution", hookedNtSetTimerResolution, &pNtSetTimerResolution, &origNtSetTimerResolution);
     return hooked;
 }
 
-int unhookLoadLibrary()
+int unhookKernel32()
 {
     int rc = 0;
+    //unhookApi("NtSetTimerResolution", &pNtSetTimerResolution);
     unhookApi("LoadLibraryA", &pLoadLibraryA);
     unhookApi("LoadLibraryW", &pLoadLibraryW);
     unhookApi("LoadLibraryExA", &pLoadLibraryExA);
+    unhookApi("timeBeginPeriod", &pTimeBeginPeriod);
+    unhookApi("timeEndPeriod", &pTimeEndPeriod);
+    unhookWinMM();
     return rc;
 }
 
@@ -234,15 +290,13 @@ bool init()
     if (MH_Initialize() != MH_OK) {
         return false;
     }
-    if (!hookWinMM(NULL, NULL))
-        hookLoadLibrary();
+    hookKernel32();
     return true;
 }
 
 void deinit()
 {
-    unhookLoadLibrary();
-    unhookWinMM();
+    unhookKernel32();
     if (hfile != INVALID_HANDLE_VALUE) {
         CloseHandle(hfile);
         hfile = 0;
